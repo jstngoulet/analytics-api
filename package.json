@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "yarn tsc && node dist/index.js"
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/index.js",
+    "watch-ts": "tsc -w",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "keywords": [],
   "author": "Justin Goulet",
@@ -30,5 +31,8 @@
     "@types/node-fetch": "^2.6.12",
     "@types/pg": "^8.11.11",
     "typescript": "^5.7.3"
+  }, 
+  "engines": {
+    "node": "23.6.1"
   }
 }
