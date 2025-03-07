@@ -13,6 +13,7 @@ const client = new Client({
   user: DB_USER,
   password: DB_PASSWORD,
   database: DB_NAME,
+  ssl: true
 });
 
 client.connect()
