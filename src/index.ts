@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cors from "cors";
 import { authenticateJWT, loginUser, registerUser } from './api/Domains/Auth/auth';
 import { sendEvent } from './api/Domains/Analytics/NewEvent';
 // import { loginUser } from './playground';;
@@ -10,6 +11,29 @@ dotenv.config();
 
 const app = express();
 const port = API_PORT;
+
+const allowedOrigins: string[] = [
+  "http://localhost:5173",
+  "https://tizzle.dev",
+  "*",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // bypass the requests with no origin (like curl requests, mobile apps, etc )
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 app.use(express.json());
 
