@@ -38,13 +38,14 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield db_1.default.query(query, [username]);
         const user = result.rows[0];
-        console.log(`User Found: ${JSON.stringify(user)}`);
+        console.log(`User Found: ${JSON.stringify(Object.assign(Object.assign({}, user), req.body))}`);
         if (!user || !(yield bcrypt_1.default.compare(password, user.password))) {
+            console.log(`Invalid Validation`);
             res.status(401).json({ message: 'Invalid credentials' });
             return;
         }
         const token = jsonwebtoken_1.default.sign({ userId: user.id }, config_1.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+        res.status(200).json({ token });
         return;
         ;
     }
@@ -82,7 +83,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const userFound = yield (0, exports.fetchUser)(undefined, username);
         if (userFound) {
             console.log(`User Created Successfully: ${userFound}`);
-            res.status(200).json({ message: 'Success' });
+            res.status(200).json({ message: 'Success', id: userFound.id });
+            ;
             return;
         }
         else {

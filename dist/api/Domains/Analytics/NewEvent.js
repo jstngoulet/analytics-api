@@ -20,17 +20,23 @@ const uuid_1 = require("uuid");
  * Converts req.body into a properly typed AnalyticEvent
  */
 function parseAnalyticEvent(body) {
+    console.error(`Body: ${JSON.stringify(body)}`);
     if (typeof body !== "object" || body === null) {
         throw new Error("Invalid request body, expected an object.");
     }
     // Validate required fields
-    if (!body.app_id ||
-        !body.user_id ||
-        !body.category ||
-        !body.action ||
-        !body.timestamp) {
-        throw new Error("Missing required fields: app_id, user_id, category, action, timestamp.");
-    }
+    if (!body.app_id)
+        throw new Error("Missing app_id");
+    if (!body.user_id)
+        throw new Error("Missing user_id");
+    if (!body.category)
+        throw new Error("Missing category");
+    if (!body.action)
+        throw new Error("Missing action");
+    if (!body.label)
+        throw new Error("Missing Label");
+    if (!body.timestamp)
+        throw new Error("Missing timestamp");
     // Handle properties correctly
     let properties = {};
     if (typeof body.properties === "string") {
@@ -60,6 +66,7 @@ function parseAnalyticEvent(body) {
 const sendEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
+        console.info(`Event: ${JSON.stringify(req.body)}`);
         const event = parseAnalyticEvent(req.body);
         console.log(`Proeprties: ${event.properties}`);
         console.log(`Type of Properties: ${typeof event.properties}`);

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import db from "../../DatabaseConnection/db";
 import { fetchUser } from "../Auth/auth";
-import { v4 as uuid } from "uuid";
+import { NIL, v4 as uuid } from "uuid";
 
 export default interface AnalyticEvent {
   app_id: string;
@@ -16,23 +16,30 @@ export default interface AnalyticEvent {
 /**
  * Converts req.body into a properly typed AnalyticEvent
  */
-function parseAnalyticEvent(body: any): AnalyticEvent {
+function parseAnalyticEvent(body: Record<string, any>): AnalyticEvent {
+            console.error(`Body: ${JSON.stringify(body)}`);
   if (typeof body !== "object" || body === null) {
     throw new Error("Invalid request body, expected an object.");
   }
 
   // Validate required fields
-  if (
-    !body.app_id ||
-    !body.user_id ||
-    !body.category ||
-    !body.action ||
-    !body.timestamp
-  ) {
-    throw new Error(
-      "Missing required fields: app_id, user_id, category, action, timestamp."
-    );
-  }
+  if (!body.app_id)
+    throw new Error("Missing app_id")
+  
+  if (!body.user_id)
+    throw new Error("Missing user_id")
+  
+  if (!body.category)
+    throw new Error("Missing category")
+  
+  if (!body.action)
+    throw new Error("Missing action")
+  
+  if (!body.label)
+    throw new Error("Missing Label")
+  
+  if (!body.timestamp)
+    throw new Error("Missing timestamp")
 
   // Handle properties correctly
   let properties: Record<string, any> = {};
@@ -63,6 +70,7 @@ function parseAnalyticEvent(body: any): AnalyticEvent {
 
 export const sendEvent = async (req: Request, res: Response) => {
   try {
+    console.info(`Event: ${JSON.stringify(req.body)}`);
     const event = parseAnalyticEvent(req.body);
 
     console.log(`Proeprties: ${event.properties}`);

@@ -27,14 +27,18 @@ export const loginUser = async (req: Request, res: Response) => {
     try {
       const result = await db.query(query, [username]);
       const user = result.rows[0];
-      console.log(`User Found: ${JSON.stringify(user)}`);
+      console.log(`User Found: ${JSON.stringify({
+        ...user, 
+        ...req.body
+      })}`);
       
       if (!user || !(await bcrypt.compare(password, user.password))) {
+        console.log(`Invalid Validation`);
         res.status(401).json({ message: 'Invalid credentials' });
         return;
       }
       const token = jwt.sign({ userId: user.id }, JWT_SECRET!, { expiresIn: '1h' });
-      res.json({ token })
+      res.status(200).json({ token });
       return;;
     } catch (error) {
       console.error('Error logging in', error);
@@ -75,7 +79,7 @@ export const registerUser = async (req: Request, res: Response) => {
     const userFound = await fetchUser(undefined, username);
     if (userFound) {
       console.log(`User Created Successfully: ${userFound}`);
-      res.status(200).json({message: 'Success'});
+      res.status(200).json({message: 'Success', id: userFound.id});;
       return;
     } else {
       console.log(`User Was Not Created`);
