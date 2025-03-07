@@ -38,8 +38,8 @@ app.use(
 app.use(express.json());
 
 // Route to login and get JWT
-app.post('/login', loginUser);
-app.post('/register', registerUser);
+app.post('/auth/login', loginUser);
+app.post('/auth/register', registerUser);
 
 //  Analytics Endpoint
 app.post(
