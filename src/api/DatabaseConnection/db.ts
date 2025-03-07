@@ -9,11 +9,13 @@ import {
 
 const client = new Client({
   host: DB_HOST,
-  port: parseInt(DB_PORT || '5432'),
+  port: parseInt(DB_PORT || "5432"),
   user: DB_USER,
   password: DB_PASSWORD,
   database: DB_NAME,
-  ssl: true
+  ssl: {
+    rejectUnauthorized: false, // Allows self-signed certs
+  },
 });
 
 client.connect()
